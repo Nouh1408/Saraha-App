@@ -36,7 +36,7 @@ const schema = new Schema({
             }
             return true
         },
-        
+        unique:true
     },
     dob:{
         type:Date

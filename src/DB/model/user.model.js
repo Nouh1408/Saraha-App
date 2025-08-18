@@ -22,7 +22,7 @@ const schema = new Schema({
         },
         trim:true,
         lowercase:true,
-        unique:true
+        // unique:true check with BE
     },
     password:{
         type:String,
@@ -36,7 +36,7 @@ const schema = new Schema({
             }
             return true
         },
-        unique:true
+        // unique:true
     },
     dob:{
         type:Date

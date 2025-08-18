@@ -45,11 +45,11 @@ const schema = new Schema({
 },{timestamps:true})
 
 
-schema.virtual("fullname").get(function (){
+schema.virtual("fullName").get(function (){
     return `${this.firstName} ${this.lastName}`
 })
 
-schema.virtual("fullname").set(function(value){
+schema.virtual("fullName").set(function(value){
     const [firstName,lastName] = value.split(" ")
     this.firstName = firstName
     this.lastName = lastName

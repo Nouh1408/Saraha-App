@@ -1,21 +1,23 @@
 import { User } from "../../DB/model/user.model.js";
-export default register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     //get data
-    const { fullname, email, password, phoneNumber, dob } = req.body;
+    const { fullName, email, password, phoneNumber, dob } = req.body;
+    console.log("REQ BODY:", req.body);
     //user existence
-    const userExist = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    // const userExist = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    const userExist = await User.findOne({email});
     if (userExist) {
       throw new Error("email already exist", { cause: 409 });
     }
     //prepare data
-    const user = new User({
-        fullname,
-        email,
-        password,
-        phoneNumber,
-        dob
-    })
+  const user = new User({
+  fullName,
+  email,
+  password,
+  phoneNumber,
+  dob
+});
     //create user
      await user.save()
   } catch (error) {

@@ -46,10 +46,12 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
  try {
    const { email, phoneNumber, password } = req.body;
-  const userExist = User.findOne({
+   console.log("Req.body", req.body);
+   
+  const userExist = await User.findOne({
     $or: [
       {
         $and: [

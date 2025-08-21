@@ -72,6 +72,8 @@ export const login = async (req, res) => {
   if(!userExist){
      throw new Error("User already exists",{cause:409});
   }
+  console.log(userExist);
+  
   const match =bcrypt.compareSync(password,userExist.password)
   if(!match){
     throw new Error("Passsword not matched", {cause:401})

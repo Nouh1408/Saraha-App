@@ -42,7 +42,7 @@ const schema = new Schema({
         type:Date
     }
 
-},{timestamps:true})
+},{timestamps:true, toObject:{virtuals:true}})
 
 
 schema.virtual("fullName").get(function (){

@@ -41,7 +41,7 @@ export const register = async (req, res) => {
     sendMail({
       to:email,
       subject:"verify account",
-      html:"<p>OTP to verify your accouut</p>",
+      html:`<p>OTP to verify your accouut. your otp is ${otp}</p>`,
     })
     //create user
     await user.save();

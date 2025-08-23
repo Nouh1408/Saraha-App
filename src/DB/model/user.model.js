@@ -40,6 +40,9 @@ const schema = new Schema({
     },
     dob:{
         type:Date
+    },
+    otp:{
+        type:Number
     }
 
 },{timestamps:true, toObject:{virtuals:true}})

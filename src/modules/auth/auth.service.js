@@ -1,5 +1,6 @@
 import { User } from "../../DB/model/user.model.js";
 import bcrypt from "bcrypt";
+import { sendMail } from "../../utils/email/index.js";
 export const register = async (req, res) => {
   try {
     //get data
@@ -36,6 +37,12 @@ export const register = async (req, res) => {
       phoneNumber,
       dob,
     });
+    const otp = Math.floor(Math.random()*1000000+10000)
+    sendMail({
+      to:email,
+      subject:"verify account",
+      html:"<p>OTP to verify your accouut</p>",
+    })
     //create user
     await user.save();
     return res.status(201).json({ message: "created success" });

@@ -38,7 +38,10 @@ export const register = async (req, res) => {
       dob,
     });
     const otp = Math.floor(Math.random()*1000000+10000)
-    sendMail({
+    const otpExpire = Date.now() +45*1000
+    user.otp = otp
+    user.otpExpire = otpExpire
+    await sendMail({
       to:email,
       subject:"verify account",
       html:`<p>OTP to verify your accouut. your otp is ${otp}</p>`,

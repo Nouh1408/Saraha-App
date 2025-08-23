@@ -38,11 +38,18 @@ const schema = new Schema({
         },
         // unique:true
     },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
     dob:{
         type:Date
     },
     otp:{
         type:Number
+    },
+    otpExpire:{
+        type:Date
     }
 
 },{timestamps:true, toObject:{virtuals:true}})

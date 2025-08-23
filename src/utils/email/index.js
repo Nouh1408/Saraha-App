@@ -9,9 +9,9 @@ export async function sendMail({to,subject,html}){
         }
     })
    await transport.sendMail({
-        from:"'Saraha app'<ahmedinouh@gmail.com",
-        to:"",
-        subject:"Verify Account",
+        from:'"Saraha App" <ahmedinouh@gmail.com>',
+        to,
+        subject,
         html,
         
     })

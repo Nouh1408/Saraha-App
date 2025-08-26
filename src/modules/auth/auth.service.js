@@ -37,15 +37,15 @@ export const register = async (req, res) => {
       phoneNumber,
       dob,
     });
-    const otp = Math.floor(Math.random()*1000000+10000)
-    const otpExpire = Date.now() +45*1000
-    user.otp = otp
-    user.otpExpire = otpExpire
+    const otp = Math.floor(Math.random() * 1000000 + 10000);
+    const otpExpire = Date.now() + 45 * 1000;
+    user.otp = otp;
+    user.otpExpire = otpExpire;
     await sendMail({
-      to:email,
-      subject:"verify account",
-      html:`<p>OTP to verify your accouut. your otp is ${otp}</p>`,
-    })
+      to: email,
+      subject: "verify account",
+      html: `<p>OTP to verify your accouut. your otp is ${otp}</p>`,
+    });
     //create user
     await user.save();
     return res.status(201).json({ message: "created success" });
@@ -56,40 +56,66 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+export const verifyAccount = async (req, res) => {
  try {
-   const { email, phoneNumber, password } = req.body;
-   console.log("Req.body", req.body);
-   
-  const userExist = await User.findOne({
-    $or: [
-      {
-        $and: [
-          { email: { $exists: true } },
-          { email: { $ne: null } },
-          { email: email },
-        ],
-      },
-      {
-        $and: [
-          { phoneNumber: { $exists: true } },
-          { phoneNumber: { $ne: null } },
-          { phoneNumber: phoneNumber },
-        ],
-      },
-    ],
+   const { otp, email } = req.body;
+const userExist =  await User.findOne({
+    email,
+    otp,
+    otpExpire:{$gt: Date.now()},
   });
   if(!userExist){
-     throw new Error("User already exists",{cause:409});
+    throw new Error("Invalid OTP", {cause:409})
   }
-  console.log(userExist);
-  
-  const match =bcrypt.compareSync(password,userExist.password)
-  if(!match){
-    throw new Error("Passsword not matched", {cause:401})
-  }
-  return res.status(200).json({message:"User logged in successfully",success:true})
+  userExist.isVerified = true
+  userExist.otp = undefined //so they can be unused
+  userExist.otpExpire = undefined
+
+  await userExist.save() //save to database
+  return res.status(201).json({message:"User Verified successfully",success:true})
  } catch (error) {
-  return res.status(error.cause||500).json({message:error.cause,success:false})
+  return res.status(error.cause||500).json({message:error.message, success:false})
  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, phoneNumber, password } = req.body;
+    console.log("Req.body", req.body);
+
+    const userExist = await User.findOne({
+      $or: [
+        {
+          $and: [
+            { email: { $exists: true } },
+            { email: { $ne: null } },
+            { email: email },
+          ],
+        },
+        {
+          $and: [
+            { phoneNumber: { $exists: true } },
+            { phoneNumber: { $ne: null } },
+            { phoneNumber: phoneNumber },
+          ],
+        },
+      ],
+    });
+    if (!userExist) {
+      throw new Error("User already exists", { cause: 409 });
+    }
+    console.log(userExist);
+
+    const match = bcrypt.compareSync(password, userExist.password);
+    if (!match) {
+      throw new Error("Passsword not matched", { cause: 401 });
+    }
+    return res
+      .status(200)
+      .json({ message: "User logged in successfully", success: true });
+  } catch (error) {
+    return res
+      .status(error.cause || 500)
+      .json({ message: error.cause, success: false });
+  }
 };

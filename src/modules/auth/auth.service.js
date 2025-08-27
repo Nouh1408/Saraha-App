@@ -1,6 +1,9 @@
 import { User } from "../../DB/model/user.model.js";
 import bcrypt from "bcrypt";
 import { sendMail } from "../../utils/email/index.js";
+import { generateOtp } from "../../utils/otp/index.js";
+
+
 export const register = async (req, res) => {
   try {
     //get data
@@ -37,8 +40,7 @@ export const register = async (req, res) => {
       phoneNumber,
       dob,
     });
-    const otp = Math.floor(Math.random() * 1000000 + 10000);
-    const otpExpire = Date.now() + 45 * 1000;
+  const {otp,otpExpire}= generateOtp()
     user.otp = otp;
     user.otpExpire = otpExpire;
     await sendMail({
@@ -77,6 +79,25 @@ const userExist =  await User.findOne({
   return res.status(error.cause||500).json({message:error.message, success:false})
  }
 };
+
+export const resendOTP = async (req,res,next)=>{
+  try {
+    const {email} = req.body
+  const {otp,otpExpire} = generateOtp()
+  console.log({email});
+  
+  await User.updateOne({email},{otp,otpExpire})
+  await sendMail({
+      to: email,
+      subject: "resent OTP",
+      html: `<p>NEWOTP to verify your accouut. your otp is ${otp}</p>`,
+    });
+    return res.status(201).json({message:"OTP resent",success:true})
+  } catch (error) {
+    return res.status(error.cause||500).json({message:error.message, success:false})
+  }
+
+}
 
 export const login = async (req, res) => {
   try {

@@ -82,9 +82,11 @@ const userExist =  await User.findOne({
 
 export const resendOTP = async (req,res,next)=>{
   try {
-    const {email} = req.body
+    const { email } = req.body;
+console.log({ email });
+
   const {otp,otpExpire} = generateOtp()
-  console.log({email});
+  
   
   await User.updateOne({email},{otp,otpExpire})
   await sendMail({
